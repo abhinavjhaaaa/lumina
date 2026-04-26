@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Simple Chatbot</title>
+  <title>Chatbot</title>
 </head>
 <body>
 
 <h2>Chatbot</h2>
 
 <input id="input" placeholder="Type something..." />
-<button onclick="send()">Send</button>
+<button id="btn">Send</button>
 
 <p id="output"></p>
 
 <script>
+document.getElementById("btn").addEventListener("click", send);
+
 async function send() {
   const message = document.getElementById("input").value;
 
+  console.log("Sending:", message);
+
   if (!message) {
-    alert("Please type something");
+    alert("Type something first");
     return;
   }
 
-  console.log("Sending:", message);
-
   try {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message })
-    });
+    const res = await fetch(
+      "https://lumina-chatbot-khaki.vercel.app/api/chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      }
+    );
+
+    console.log("Request sent");
 
     const data = await res.json();
 
     console.log("Response:", data);
 
     document.getElementById("output").innerText =
-      data.reply || "No response from AI";
+      data.reply || "No reply";
 
   } catch (err) {
     console.error("Error:", err);
     document.getElementById("output").innerText =
-      "Error: Unable to connect";
+      "Error connecting to server";
   }
 }
 </script>
