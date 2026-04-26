@@ -16,17 +16,34 @@
 async function send() {
   const message = document.getElementById("input").value;
 
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message })
-  });
+  if (!message) {
+    alert("Please type something");
+    return;
+  }
 
-  const data = await res.json();
+  console.log("Sending:", message);
 
-  document.getElementById("output").innerText = data.reply;
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+
+    console.log("Response:", data);
+
+    document.getElementById("output").innerText =
+      data.reply || "No response from AI";
+
+  } catch (err) {
+    console.error("Error:", err);
+    document.getElementById("output").innerText =
+      "Error: Unable to connect";
+  }
 }
 </script>
 

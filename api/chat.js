@@ -25,13 +25,16 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    console.log("Gemini response:", data);
+
     const reply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response";
+      "No response from AI";
 
     res.status(200).json({ reply });
 
   } catch (err) {
-    res.status(500).json({ reply: "Error: " + err.message });
+    console.error("Backend Error:", err);
+    res.status(500).json({ reply: "Server error" });
   }
 }
