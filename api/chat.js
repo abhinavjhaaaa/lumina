@@ -1,40 +1,53 @@
-export default async function handler(req, res) {
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatbot</title>
+</head>
+<body>
+
+<h2>Chatbot</h2>
+
+<input id="input" placeholder="Type something..." />
+<button id="btn">Send</button>
+
+<p id="output"></p>
+
+<script>
+document.getElementById("btn").addEventListener("click", send);
+
+async function send() {
+  const message = document.getElementById("input").value;
+
+  console.log("Clicked button");
+  console.log("Message:", message);
+
+  if (!message) {
+    alert("Type something first");
+    return;
+  }
+
   try {
-    const { message } = req.body || {};
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
 
-    if (!message) {
-      return res.status(400).json({ reply: "No message provided" });
-    }
+    console.log("Request sent");
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: message }]
-            }
-          ]
-        })
-      }
-    );
+    const data = await res.json();
 
-    const data = await response.json();
+    console.log("Response:", data);
 
-    console.log("Gemini response:", data);
-
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from AI";
-
-    res.status(200).json({ reply });
+    document.getElementById("output").innerText = data.reply;
 
   } catch (err) {
-    console.error("Backend Error:", err);
-    res.status(500).json({ reply: "Server error" });
+    console.error("Error:", err);
   }
 }
+</script>
+
+</body>
+</html>
