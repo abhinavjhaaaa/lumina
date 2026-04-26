@@ -18,36 +18,26 @@ document.getElementById("btn").addEventListener("click", send);
 async function send() {
   const message = document.getElementById("input").value;
 
-  console.log("Sending:", message);
-
   if (!message) {
-    alert("Type something first");
+    alert("Type something");
     return;
   }
 
   try {
-    const res = await fetch(
-      "https://lumina-chatbot-khaki.vercel.app/api/chat",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message })
-      }
-    );
-
-    console.log("Request sent");
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
 
     const data = await res.json();
 
-    console.log("Response:", data);
-
-    document.getElementById("output").innerText =
-      data.reply || "No reply";
+    document.getElementById("output").innerText = data.reply;
 
   } catch (err) {
-    console.error("Error:", err);
+    console.error(err);
     document.getElementById("output").innerText =
       "Error connecting to server";
   }
